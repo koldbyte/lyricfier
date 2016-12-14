@@ -21,6 +21,14 @@ git clone https://github.com/emilioastarita/lyricfier.git
 # change dir
 cd lyricfier
 
+# build dependencies
+npm install -g node-gyp
+
+If you are using unix:
+sudo apt install g++ build-essential make python2.7
+npm config set python /usr/bin/python2.7
+sudo apt-get install libglib2.0-dev libdbus-1-dev
+
 # take some coffee and download all the internet with npm
 npm install
 

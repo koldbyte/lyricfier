@@ -24,6 +24,12 @@ export class Lyricfier {
     loadSettingsAndApp(cb) {
         let settingsLoaded = false;
         let appReady = false;
+
+        //MPRIS is only available on Linux
+        if(platform != 'linux'){
+            this.settings.set('useMPRIS', false);
+        }
+
         this.settings.load(() => {
             settingsLoaded = true;
             if (appReady) cb();

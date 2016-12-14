@@ -1,7 +1,10 @@
 import Component from 'vue-class-component';
 import {Searcher} from "./Searcher";
 import {template} from './template';
+import {CurrentTrackService} from './CurrentTrackService';
 import {SpotifyService} from './SpotifyService';
+import {MprisService} from './MprisService';
+const platform = require('os').platform();
 
 @Component({
     props: {
@@ -20,7 +23,7 @@ import {SpotifyService} from './SpotifyService';
 
 export class SongRender {
     protected lastSongSync;
-    protected service:SpotifyService;
+    protected service:CurrentTrackService;
     protected song;
     protected shell;
     protected searcher: Searcher;
@@ -37,17 +40,17 @@ export class SongRender {
     }
 
     scheduleNextCall() {
-        if (this.timer) {
-            clearTimeout(this.timer);
-        }
-        console.warn(
-          'Scheduling ',
-          this.settings.refreshInterval / 1000,
-          ' seconds'
-        );
-        this.timer = setTimeout(() => {
-            this.refresh();
-        }, this.settings.refreshInterval);
+            if (this.timer) {
+                clearTimeout(this.timer);
+            }
+            console.warn(
+            'Scheduling ',
+            this.settings.refreshInterval / 1000,
+            ' seconds'
+            );
+            this.timer = setTimeout(() => {
+                this.refresh();
+            }, this.settings.refreshInterval);
     }
 
     ready() {
@@ -56,7 +59,9 @@ export class SongRender {
 
     refresh() {
         console.log('refreshing');
-        this.getSpotify().getCurrentSong((err, song) => {
+        var currentTrackService = this.getCurrentTrackService();
+
+        currentTrackService.getCurrentSong((err, song) => {
             if (err) {
                 this.showError('Current song error: ' + err);
                 this.scheduleNextCall();
@@ -97,7 +102,7 @@ export class SongRender {
     }
 
     isLastSong(song) {
-        for (let k of ['artist', 'title']) {
+        for (let k of ['title']) {
             if (song[k] !== this.lastSongSync[k]) {
                 return false;
             }
@@ -111,9 +116,13 @@ export class SongRender {
         }
     }
 
-    getSpotify() {
+    getCurrentTrackService() {
         if (!this.service) {
-            this.service = new SpotifyService();
+            if(platform == 'linux' && this.settings.useMPRIS == true){
+                this.service = new MprisService(this.settings);
+            }else{
+                this.service = new SpotifyService();
+            }
         }
         return this.service;
     }

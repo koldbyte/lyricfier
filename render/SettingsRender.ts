@@ -70,6 +70,25 @@ import Component from 'vue-class-component'
           </select>
           <label for="refreshIntervalSelector">Refresh Rate</label>
         </div>
+        <div>
+          <select
+            id="playerSelector"
+            v-model="settings.playerName"
+            v-on:change="onChangeSettings()">
+              <option value="vlc">VLC</option>
+              <option value="clementine">Clementine</option>
+              <option value="cantata">Cantata</option>
+          </select>
+          <label for="playerSelector">CHoose Media Player</label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            id="useMPRISCheckbox"
+            v-model="settings.useMPRIS"
+            v-on:change="onChangeSettings()">
+          <label for="useMPRISCheckbox">Use MPRIS</label>
+        </div>
       </div>
     </div>
   `
